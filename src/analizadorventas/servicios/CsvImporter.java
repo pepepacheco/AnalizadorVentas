@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package analizadorventas.services;
+package analizadorventas.servicios;
 import com.opencsv.CSVParser;
 import com.opencsv.CSVReader;
 import java.io.BufferedReader;

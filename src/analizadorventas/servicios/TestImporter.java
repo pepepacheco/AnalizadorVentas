@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package analizadorventas.services;
+package analizadorventas.servicios;
 
 import java.nio.charset.Charset;
 
@@ -20,12 +20,12 @@ public class TestImporter {
         linea = in.readNextLine();
         System.out.println(linea[4].trim() + linea[3] + linea[5]);
         */
-        /* Modo de funcionamiento nº 2*/
+        /* Modo de funcionamiento nº 2
         String valor;
         in.readNextLine();
         in.readNextLine();
         System.out.println(in.readValue(5) + " " + in.readValue(4));
         in.readNextLine();
-        
+        */
     }
 }
