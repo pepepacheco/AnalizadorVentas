@@ -4,11 +4,9 @@
  * and open the template in the editor.
  */
 package analizadorventas.servicios;
-import com.opencsv.CSVParser;
 import com.opencsv.CSVReader;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
