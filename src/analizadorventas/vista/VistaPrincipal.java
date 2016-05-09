@@ -5,12 +5,24 @@
  */
 package analizadorventas.vista;
 
+import analizadorventas.controlador.CsvImporter;
+import java.nio.charset.Charset;
+import javax.swing.JFileChooser;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+
+
 /**
  *
  * @author root
  */
 public class VistaPrincipal extends javax.swing.JFrame {
 
+    CsvImporter reader;
+    String[] data;
+    String[] tableData = new String[4];
+    DefaultTableModel dtm = new DefaultTableModel(0, 4);
+    String[] header = {"Nombre del comprador","Producto","Precio", "Fecha de Transaccion"};
     /**
      * Creates new form VistaPrincipal
      */
@@ -28,14 +40,31 @@ public class VistaPrincipal extends javax.swing.JFrame {
     private void initComponents() {
 
         jFileChooser1 = new javax.swing.JFileChooser();
-        jSplitPane1 = new javax.swing.JSplitPane();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         MAbrir = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Nombre de comprador", "Producto", "Precio", "Fecha Transaccion"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(jTable1);
 
         jMenu1.setText("File");
 
@@ -55,19 +84,33 @@ public class VistaPrincipal extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 277, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 424, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void MAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MAbrirActionPerformed
-        // TODO add your handling code here:
-        jFileChooser1.showOpenDialog(MAbrir);
+        dtm.setColumnIdentifiers(header);
+        jTable1.setModel(dtm);
+        int selection = jFileChooser1.showOpenDialog(jMenu1);
+        if (selection == JFileChooser.APPROVE_OPTION)
+            reader = new CsvImporter(jFileChooser1.getSelectedFile(), Charset.forName("UTF-8"));
+        while ((data =reader.readNextLine()) != null){
+            tableData[0] =data[4];
+            tableData[1] =data[1];
+            tableData[2] =data[2];
+            tableData[3] =data[0];
+            dtm.addRow(tableData);
+        }
+        jTable1.setModel(dtm);
+        
+        
+            
     }//GEN-LAST:event_MAbrirActionPerformed
 
     /**
@@ -110,6 +153,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
     private javax.swing.JFileChooser jFileChooser1;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
 }
