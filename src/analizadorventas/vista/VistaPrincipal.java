@@ -5,11 +5,12 @@
  */
 package analizadorventas.vista;
 
-import analizadorventas.controlador.CsvImporter;
-import java.nio.charset.Charset;
+import analizadorventas.controlador.Controlador;
+import analizadorventas.modelo.Transaccion;
 import javax.swing.JFileChooser;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
+import java.util.List;
+import java.util.ArrayList;
+
 
 
 /**
@@ -17,11 +18,7 @@ import javax.swing.table.TableModel;
  * @author root
  */
 public class VistaPrincipal extends javax.swing.JFrame {
-
-    CsvImporter reader;
-    String[] data;
-    String[] tableData = new String[4];
-    DefaultTableModel dtm = new DefaultTableModel(0, 4);
+    List<Transaccion> lista = new ArrayList<>();
     String[] header = {"Nombre del comprador","Producto","Precio", "Fecha de Transaccion"};
     /**
      * Creates new form VistaPrincipal
@@ -40,13 +37,28 @@ public class VistaPrincipal extends javax.swing.JFrame {
     private void initComponents() {
 
         jFileChooser1 = new javax.swing.JFileChooser();
+        jFormattedTextField1 = new javax.swing.JFormattedTextField();
+        jSplitPane1 = new javax.swing.JSplitPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        jPanel1 = new javax.swing.JPanel();
+        fieldNombre = new javax.swing.JTextField();
+        lblNombre = new javax.swing.JLabel();
+        lblProducto = new javax.swing.JLabel();
+        fieldProducto = new javax.swing.JTextField();
+        lblPrecio = new javax.swing.JLabel();
+        fieldPrecio = new javax.swing.JTextField();
+        labelFecha = new javax.swing.JLabel();
+        fieldFecha = new javax.swing.JTextField();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         MAbrir = new javax.swing.JMenuItem();
 
+        jFormattedTextField1.setText("jFormattedTextField1");
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -66,6 +78,58 @@ public class VistaPrincipal extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(jTable1);
 
+        jSplitPane1.setTopComponent(jScrollPane1);
+
+        lblNombre.setText("Nombre de usuario:");
+
+        lblProducto.setText("Producto:");
+
+        lblPrecio.setText("Precio:");
+
+        labelFecha.setText("Fecha Transaccion:");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(labelFecha)
+                    .addComponent(lblPrecio)
+                    .addComponent(lblNombre)
+                    .addComponent(lblProducto))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(fieldNombre)
+                    .addComponent(fieldProducto)
+                    .addComponent(fieldPrecio)
+                    .addComponent(fieldFecha, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE))
+                .addContainerGap(494, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblNombre)
+                    .addComponent(fieldNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblProducto)
+                    .addComponent(fieldProducto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblPrecio)
+                    .addComponent(fieldPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(labelFecha)
+                    .addComponent(fieldFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(62, Short.MAX_VALUE))
+        );
+
+        jSplitPane1.setBottomComponent(jPanel1);
+
         jMenu1.setText("File");
 
         MAbrir.setText("Abrir");
@@ -84,33 +148,21 @@ public class VistaPrincipal extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE)
+            .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 424, Short.MAX_VALUE)
+            .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 627, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void MAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MAbrirActionPerformed
-        dtm.setColumnIdentifiers(header);
-        jTable1.setModel(dtm);
         int selection = jFileChooser1.showOpenDialog(jMenu1);
         if (selection == JFileChooser.APPROVE_OPTION)
-            reader = new CsvImporter(jFileChooser1.getSelectedFile(), Charset.forName("UTF-8"));
-        while ((data =reader.readNextLine()) != null){
-            tableData[0] =data[4];
-            tableData[1] =data[1];
-            tableData[2] =data[2];
-            tableData[3] =data[0];
-            dtm.addRow(tableData);
-        }
-        jTable1.setModel(dtm);
-        
-        
-            
+            lista = Controlador.crearColeccionRegistros(jFileChooser1.getSelectedFile());
+        jTable1.setModel(Controlador.InsertarRegistros(header, lista));   
     }//GEN-LAST:event_MAbrirActionPerformed
 
     /**
@@ -150,10 +202,21 @@ public class VistaPrincipal extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem MAbrir;
+    private javax.swing.JTextField fieldFecha;
+    private javax.swing.JTextField fieldNombre;
+    private javax.swing.JTextField fieldPrecio;
+    private javax.swing.JTextField fieldProducto;
     private javax.swing.JFileChooser jFileChooser1;
+    private javax.swing.JFormattedTextField jFormattedTextField1;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTable jTable1;
+    private javax.swing.JLabel labelFecha;
+    private javax.swing.JLabel lblNombre;
+    private javax.swing.JLabel lblPrecio;
+    private javax.swing.JLabel lblProducto;
     // End of variables declaration//GEN-END:variables
 }

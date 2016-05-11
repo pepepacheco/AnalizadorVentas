@@ -9,8 +9,9 @@ package analizadorventas.modelo;
  *
  * @author root
  */
-public class Cliente {
-    private String nombre;
-    // En el futuro hay que añadir una lista de transacciones de modo que se guarden todas las transacciones de una persona en ella
-    
+public class TestTransaccion {
+    public static void main(String[] args) {
+        Transaccion t = new Transaccion("pepe", "locion", 12, "1/2/09 6:17");
+        
+    }
 }
