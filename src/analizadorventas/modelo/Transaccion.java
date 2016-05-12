@@ -22,8 +22,11 @@ public class Transaccion {
         String dia;
         String mes;
         String ano;
-        this.nombreCliente = nombre;
-        this.productoComprado = producto;
+        if (nombre.matches(".* .*"))
+            this.nombreCliente = nombre.trim().substring(0,nombre.indexOf(" "));
+        else
+            this.nombreCliente = nombre.trim();
+        this.productoComprado = producto.trim();
         //System.out.println(this.nombreCliente + " " +  precio);
         this.precio = precio;
         mes=fecha.substring(0,fecha.indexOf('/'));
