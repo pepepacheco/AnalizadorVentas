@@ -42,7 +42,7 @@ public class Transaccion {
             ano = "20"+ano;
         //System.out.println(ano);
         this.fecha = LocalDate.parse(ano+"-"+mes+"-"+dia);
-        this.ciudad = ciudad;
+        this.ciudad = ciudad.trim();
     }
 
     public String getNombreCliente() {
@@ -64,6 +64,39 @@ public class Transaccion {
     public String getCiudad() {
         return ciudad;
     }
+
+    public void setNombreCliente(String nombreCliente) {
+        this.nombreCliente = nombreCliente;
+    }
+
+    public void setProductoComprado(String productoComprado) {
+        this.productoComprado = productoComprado;
+    }
+
+    public void setPrecio(int precio) {
+        this.precio = precio;
+    }
+
+    public void setFecha(String fecha) {
+        String dia;
+        String mes;
+        String ano;
+        ano=fecha.substring(0,fecha.indexOf('-'));
+        if (ano.matches("\\d\\d"))
+            ano = "20"+ano;
+        mes=fecha.substring(fecha.indexOf('-')+1,fecha.lastIndexOf("-"));
+        if (mes.matches("\\d"))
+            mes = "0" + mes;
+        dia = fecha.substring(fecha.lastIndexOf("-")+1,fecha.length());
+        if (dia.matches("\\d"))
+            dia = "0" + dia;
+        this.fecha = LocalDate.parse(ano+"-"+mes+"-"+dia);
+    }
+
+    public void setCiudad(String ciudad) {
+        this.ciudad = ciudad;
+    }
+    
     
     
     

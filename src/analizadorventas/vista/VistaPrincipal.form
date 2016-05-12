@@ -190,6 +190,9 @@
           </Layout>
           <SubComponents>
             <Component class="javax.swing.JTextField" name="fieldNombre">
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fieldNombreActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="lblNombre">
               <Properties>
@@ -202,6 +205,9 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="fieldProducto">
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fieldProductoActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="lblPrecio">
               <Properties>
@@ -209,6 +215,9 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="fieldPrecio">
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fieldPrecioActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="labelFecha">
               <Properties>
@@ -216,6 +225,9 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="fieldFecha">
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fieldFechaActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="lblCiudad">
               <Properties>
@@ -223,6 +235,9 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="fieldCiudad">
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fieldCiudadActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
