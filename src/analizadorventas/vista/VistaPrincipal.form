@@ -138,6 +138,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
+                          <Component id="lblCiudad" min="-2" max="-2" attributes="0"/>
                           <Component id="labelFecha" min="-2" max="-2" attributes="0"/>
                           <Component id="lblPrecio" min="-2" max="-2" attributes="0"/>
                           <Component id="lblNombre" min="-2" max="-2" attributes="0"/>
@@ -149,6 +150,7 @@
                           <Component id="fieldProducto" max="32767" attributes="0"/>
                           <Component id="fieldPrecio" max="32767" attributes="0"/>
                           <Component id="fieldFecha" pref="168" max="32767" attributes="0"/>
+                          <Component id="fieldCiudad" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace pref="494" max="32767" attributes="0"/>
                   </Group>
@@ -176,7 +178,12 @@
                           <Component id="labelFecha" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="fieldFecha" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="62" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="lblCiudad" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="fieldCiudad" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace pref="29" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -209,6 +216,13 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="fieldFecha">
+            </Component>
+            <Component class="javax.swing.JLabel" name="lblCiudad">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Ciudad:"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="fieldCiudad">
             </Component>
           </SubComponents>
         </Container>
