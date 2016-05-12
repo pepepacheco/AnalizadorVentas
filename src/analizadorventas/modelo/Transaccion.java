@@ -16,14 +16,15 @@ public class Transaccion {
     private String productoComprado;
     private int precio;
     private LocalDate fecha;
+    private String ciudad;
 
-    public Transaccion(String nombre, String producto,int precio, String fecha) {
+    public Transaccion(String nombre, String producto,int precio, String fecha, String ciudad) {
         String dia;
         String mes;
         String ano;
         this.nombreCliente = nombre;
         this.productoComprado = producto;
-        System.out.println(this.nombreCliente + " " +  precio);
+        //System.out.println(this.nombreCliente + " " +  precio);
         this.precio = precio;
         mes=fecha.substring(0,fecha.indexOf('/'));
         if (mes.matches("\\d"))
@@ -38,6 +39,7 @@ public class Transaccion {
             ano = "20"+ano;
         //System.out.println(ano);
         this.fecha = LocalDate.parse(ano+"-"+mes+"-"+dia);
+        this.ciudad = ciudad;
     }
 
     public String getNombreCliente() {
@@ -54,6 +56,10 @@ public class Transaccion {
 
     public String getFecha() {
         return fecha.toString();
+    }
+
+    public String getCiudad() {
+        return ciudad;
     }
     
     

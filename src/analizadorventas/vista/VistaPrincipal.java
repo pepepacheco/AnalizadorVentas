@@ -19,7 +19,7 @@ import java.util.ArrayList;
  */
 public class VistaPrincipal extends javax.swing.JFrame {
     List<Transaccion> lista = new ArrayList<>();
-    String[] header = {"Nombre del comprador","Producto","Precio", "Fecha de Transaccion"};
+    String[] header = {"Nombre del comprador","Producto","Precio", "Fecha de Transaccion", "Ciudad"};
     /**
      * Creates new form VistaPrincipal
      */
@@ -65,11 +65,11 @@ public class VistaPrincipal extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Nombre de comprador", "Producto", "Precio", "Fecha Transaccion"
+                "Nombre de comprador", "Producto", "Precio", "Fecha Transaccion", "Ciudad"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -152,7 +152,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 627, Short.MAX_VALUE)
+            .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING)
         );
 
         pack();

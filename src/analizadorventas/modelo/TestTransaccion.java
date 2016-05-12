@@ -11,7 +11,7 @@ package analizadorventas.modelo;
  */
 public class TestTransaccion {
     public static void main(String[] args) {
-        Transaccion t = new Transaccion("pepe", "locion", 12, "1/2/09 6:17");
+        Transaccion t = new Transaccion("pepe", "locion", 12, "1/2/09 6:17","Jaen");
         
     }
 }

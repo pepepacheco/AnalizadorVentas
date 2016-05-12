@@ -25,6 +25,7 @@ public class Controlador {
             tableData[1] = t.getProductoComprado();
             tableData[2] = t.getPrecio()+"";
             tableData[3] = t.getFecha();
+            tableData[4] = t.getCiudad();
             dtm.addRow(tableData);
                     }
         return dtm;
@@ -34,7 +35,7 @@ public class Controlador {
         String[] data;
         CsvImporter reader = new CsvImporter(inFile, Charset.forName("UTF-8"));
         while ((data =reader.readNextLine()) != null){
-            lista.add(new Transaccion(data[4], data[1],Integer.parseInt(data[2]), data[0]));
+            lista.add(new Transaccion(data[4], data[1],Integer.parseInt(data[2]), data[0],data[5]));
         }
         return lista;
     }
