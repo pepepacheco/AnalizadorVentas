@@ -10,6 +10,7 @@ import analizadorventas.modelo.Transaccion;
 import javax.swing.JFileChooser;
 import java.util.List;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 
 
@@ -22,7 +23,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
     List<Transaccion> lista = new ArrayList<>();
     String[] header = {"Nombre del comprador","Producto","Precio", "Fecha de Transaccion", "Ciudad"};
     boolean salta =true;
-    int Vez = 0;
+    int vez = 0;
     int registro;
     
     /**
@@ -33,14 +34,20 @@ public class VistaPrincipal extends javax.swing.JFrame {
         jTable1.getSelectionModel().addListSelectionListener(new ListListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                /*if (!lista.get(registro).getNombreCliente().matches(fieldNombre.getText())){
-                    System.out.println("entra");
-                    lista.get(registro).setNombreCliente(fieldNombre.getText());
-                    salta =false;
-                    jTable1.setModel(Controlador.InsertarRegistros(header, lista));
-                    salta =true;
+                if (vez<2)
+                    vez++;
+                else{
+                    if (!lista.get(registro).getNombreCliente().matches(fieldNombre.getText())){
+                        System.out.println("entra");
+                        int valor = JOptionPane.showConfirmDialog(rootPane, "¿Guardar registros?");
+                        if(valor == JOptionPane.YES_OPTION){
+                            System.out.println("cuela");
+                            lista.get(registro).setNombreCliente(fieldNombre.getText());
+                            jTable1.setModel(Controlador.InsertarRegistros(header, lista));
+                        }
                     }
-                registro = jTable1.getSelectedRow();*/
+                }
+                registro = jTable1.getSelectedRow();
                 if (salta){
                     fieldNombre.setText(lista.get(jTable1.getSelectedRow()).getNombreCliente());
                     fieldProducto.setText(lista.get(jTable1.getSelectedRow()).getProductoComprado());
