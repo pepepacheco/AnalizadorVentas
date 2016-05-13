@@ -17,9 +17,10 @@ import javax.swing.table.DefaultTableModel;
  * @author root
  */
 public class Controlador {
+    static DefaultTableModel dtm = new DefaultTableModel();
     public static DefaultTableModel InsertarRegistros(String[] cabecera, List<Transaccion> lista){
         String[] tableData = new String[cabecera.length];
-        DefaultTableModel dtm = new DefaultTableModel(cabecera,0);
+        dtm.setColumnIdentifiers(cabecera);
         for (Transaccion t : lista) {
             tableData[0] = t.getNombreCliente();
             tableData[1] = t.getProductoComprado();

@@ -10,8 +10,8 @@ import analizadorventas.modelo.Transaccion;
 import javax.swing.JFileChooser;
 import java.util.List;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.TableModelEvent;
 
 
 
@@ -23,7 +23,8 @@ public class VistaPrincipal extends javax.swing.JFrame {
     List<Transaccion> lista = new ArrayList<>();
     String[] header = {"Nombre del comprador","Producto","Precio", "Fecha de Transaccion", "Ciudad"};
     boolean salta =true;
-    
+    boolean enfocado = false;
+    int registro=0;
     
     /**
      * Creates new form VistaPrincipal
@@ -33,38 +34,20 @@ public class VistaPrincipal extends javax.swing.JFrame {
         jTable1.getSelectionModel().addListSelectionListener(new ListListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
+                if (enfocado){
+                    enfocado = false;
+                    int dialogo = JOptionPane.showConfirmDialog(rootPane, "¿Quieres guardar los registros?");
+                    if (dialogo == JOptionPane.YES_OPTION){
+                        lista.get(registro).setNombreCliente(fieldNombre.getText());
+                        jTable1.setValueAt(lista.get(registro).getNombreCliente(), registro, 0);
+                    }                    
+                }
                 if (salta){
                     fieldNombre.setText(lista.get(jTable1.getSelectedRow()).getNombreCliente());
                     fieldProducto.setText(lista.get(jTable1.getSelectedRow()).getProductoComprado());
                     fieldPrecio.setText(lista.get(jTable1.getSelectedRow()).getPrecio()+"");
                     fieldFecha.setText(lista.get(jTable1.getSelectedRow()).getFecha());
                     fieldCiudad.setText(lista.get(jTable1.getSelectedRow()).getCiudad());
-                }
-            }
-        });
-        jTable1.getModel().addTableModelListener(new ModelListener() {
-            @Override
-            public void tableChanged(TableModelEvent e) {
-                int filaCambiada = jTable1.getSelectedRow();
-                int columnaCambiada = jTable1.getSelectedColumn();
-                switch (columnaCambiada){
-                    case 0:
-                        lista.get(filaCambiada).setNombreCliente(jTable1.getValueAt(filaCambiada, columnaCambiada).toString());
-                        break;
-                    case 1:
-                        lista.get(filaCambiada).setProductoComprado(jTable1.getValueAt(filaCambiada, columnaCambiada).toString());
-                        break;
-                    case 2:
-                        lista.get(filaCambiada).setPrecio(Integer.parseInt(jTable1.getValueAt(filaCambiada, columnaCambiada).toString()));
-                        break;
-                    case 3:
-                        lista.get(filaCambiada).setFecha(jTable1.getValueAt(filaCambiada, columnaCambiada).toString());
-                        break;
-                    case 4:
-                        lista.get(filaCambiada).setCiudad(jTable1.getValueAt(filaCambiada, columnaCambiada).toString());
-                        break;
-                    default:
-                        break;
                 }
             }
         });
@@ -125,6 +108,11 @@ public class VistaPrincipal extends javax.swing.JFrame {
 
         jSplitPane1.setTopComponent(jScrollPane1);
 
+        fieldNombre.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                fieldNombreFocusLost(evt);
+            }
+        });
         fieldNombre.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fieldNombreActionPerformed(evt);
@@ -249,6 +237,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_MAbrirActionPerformed
 
     private void fieldNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fieldNombreActionPerformed
+        enfocado = false;
         lista.get(jTable1.getSelectedRow()).setNombreCliente(fieldNombre.getText());
         int fila = jTable1.getSelectedRow();
         salta=false;
@@ -258,6 +247,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_fieldNombreActionPerformed
 
     private void fieldProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fieldProductoActionPerformed
+        enfocado = false;
         lista.get(jTable1.getSelectedRow()).setProductoComprado(fieldProducto.getText());
         int fila = jTable1.getSelectedRow();
         salta=false;
@@ -267,6 +257,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_fieldProductoActionPerformed
 
     private void fieldPrecioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fieldPrecioActionPerformed
+        enfocado = false;
         lista.get(jTable1.getSelectedRow()).setPrecio(Integer.parseInt(fieldPrecio.getText()));
         int fila = jTable1.getSelectedRow();
         salta=false;
@@ -276,6 +267,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_fieldPrecioActionPerformed
 
     private void fieldFechaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fieldFechaActionPerformed
+        enfocado = false;
         lista.get(jTable1.getSelectedRow()).setFecha(fieldFecha.getText());
         int fila = jTable1.getSelectedRow();
         salta=false;
@@ -285,6 +277,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_fieldFechaActionPerformed
 
     private void fieldCiudadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fieldCiudadActionPerformed
+        enfocado = false;
         lista.get(jTable1.getSelectedRow()).setCiudad(fieldCiudad.getText());
         int fila = jTable1.getSelectedRow();
         salta=false;
@@ -292,6 +285,13 @@ public class VistaPrincipal extends javax.swing.JFrame {
         salta=true;
         jTable1.setRowSelectionInterval(fila, fila);
     }//GEN-LAST:event_fieldCiudadActionPerformed
+
+    private void fieldNombreFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fieldNombreFocusLost
+        if (!fieldNombre.getText().equals(lista.get(jTable1.getSelectedRow()).getNombreCliente())){
+            enfocado=true;
+            registro = jTable1.getSelectedRow();
+        }
+    }//GEN-LAST:event_fieldNombreFocusLost
     
     /**
      * @param args the command line arguments
