@@ -25,6 +25,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
     boolean salta =true;
     int vez = 0;
     int registro;
+    int destino;
     
     /**
      * Creates new form VistaPrincipal
@@ -34,28 +35,41 @@ public class VistaPrincipal extends javax.swing.JFrame {
         jTable1.getSelectionModel().addListSelectionListener(new ListListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                if (vez<2)
-                    vez++;
-                else{
-                    if (!lista.get(registro).getNombreCliente().matches(fieldNombre.getText())){
-                        System.out.println("entra");
+                //System.out.println("entra");
+                if (!fieldNombre.getText().matches("") && !fieldProducto.getText().matches("")
+                        && !fieldPrecio.getText().matches("") && !fieldCiudad.getText().matches("") && !fieldFecha.getText().matches("")){
+                    Transaccion t = new Transaccion(fieldNombre.getText(), fieldProducto.getText(), 
+                    Integer.parseInt(fieldPrecio.getText()), fieldFecha.getText(), fieldCiudad.getText());
+                    //if (!lista.get(registro).getNombreCliente().matches(fieldNombre.getText())){
+                    if (!lista.get(registro).equals(t)){
+                        if (jTable1.getSelectedRow() != -1){
+                            destino = jTable1.getSelectedRow();
+                            //System.out.println(destino);
+                        }
+                        //System.out.println("entra 2, " + registro);
                         int valor = JOptionPane.showConfirmDialog(rootPane, "¿Guardar registros?");
                         if(valor == JOptionPane.YES_OPTION){
-                            System.out.println("cuela");
-                            lista.get(registro).setNombreCliente(fieldNombre.getText());
+                            salta = false;
+                            //System.out.println("entra 4");
+                            lista.get(registro).setTransaccion(new Transaccion(fieldNombre.getText(), fieldProducto.getText(), Integer.parseInt(fieldPrecio.getText()),fieldFecha.getText(), fieldCiudad.getText()));
+                            //System.out.println(lista.get(registro).getNombreCliente());
                             jTable1.setModel(Controlador.InsertarRegistros(header, lista));
+                            salta = true;
+                            jTable1.setRowSelectionInterval(destino, destino);
                         }
+                        vez = 0;
                     }
                 }
-                registro = jTable1.getSelectedRow();
+                if (jTable1.getSelectedRow() != -1)
+                    registro = jTable1.getSelectedRow();
                 if (salta){
+                    //System.out.println("entra 3");
                     fieldNombre.setText(lista.get(jTable1.getSelectedRow()).getNombreCliente());
                     fieldProducto.setText(lista.get(jTable1.getSelectedRow()).getProductoComprado());
                     fieldPrecio.setText(lista.get(jTable1.getSelectedRow()).getPrecio()+"");
                     fieldFecha.setText(lista.get(jTable1.getSelectedRow()).getFecha());
                     fieldCiudad.setText(lista.get(jTable1.getSelectedRow()).getCiudad());
                 }
-                
             }
         });
     }

@@ -59,6 +59,14 @@ public class Transaccion {
         }
         this.ciudad = ciudad.trim();
     }
+    public void setTransaccion(Transaccion t){
+        this.nombreCliente = t.nombreCliente;
+        this.productoComprado = t.productoComprado;
+        this.precio = t.precio;
+        this.fecha = t.fecha;
+        this.ciudad = t.ciudad;
+           
+    }
 
     public String getNombreCliente() {
         return nombreCliente;

@@ -18,17 +18,28 @@ import javax.swing.table.DefaultTableModel;
  */
 public class Controlador {
     static DefaultTableModel dtm = new DefaultTableModel();
+    static boolean creado =false;
     public static DefaultTableModel InsertarRegistros(String[] cabecera, List<Transaccion> lista){
+        //System.out.println("Entra a la funcion");
+        dtm.setRowCount(0);
         String[] tableData = new String[cabecera.length];
-        dtm.setColumnIdentifiers(cabecera);
-        for (Transaccion t : lista) {
-            tableData[0] = t.getNombreCliente();
-            tableData[1] = t.getProductoComprado();
-            tableData[2] = t.getPrecio()+"";
-            tableData[3] = t.getFecha();
-            tableData[4] = t.getCiudad();
+        //System.out.println("crea tableData");
+            if (creado == false){
+            dtm.setColumnIdentifiers(cabecera);
+            creado = true;
+            }
+        //System.out.println("crea el tableModel");
+        for (int i = 0;i<lista.size();i++) {
+            //System.out.println("Entra en el bucle");
+            tableData[0] = lista.get(i).getNombreCliente();
+            tableData[1] = lista.get(i).getProductoComprado();
+            tableData[2] = lista.get(i).getPrecio()+"";
+            tableData[3] = lista.get(i).getFecha();
+            tableData[4] = lista.get(i).getCiudad();
             dtm.addRow(tableData);
+          //  System.out.println("Vuelta de ciclo");
                     }
+        //System.out.println("Sale de la funcion");
         return dtm;
     }
     public static List<Transaccion> crearColeccionRegistros(File inFile){
