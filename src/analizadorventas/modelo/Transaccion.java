@@ -59,6 +59,15 @@ public class Transaccion {
         }
         this.ciudad = ciudad.trim();
     }
+    
+    public Transaccion(){
+        this.nombreCliente="";
+        this.productoComprado="";
+        this.precio=0;
+        this.fecha=LocalDate.now();
+        this.ciudad="";
+    }
+    
     public void setTransaccion(Transaccion t){
         this.nombreCliente = t.nombreCliente;
         this.productoComprado = t.productoComprado;

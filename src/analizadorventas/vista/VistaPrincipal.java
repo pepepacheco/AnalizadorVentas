@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 
 
@@ -32,46 +33,42 @@ public class VistaPrincipal extends javax.swing.JFrame {
      */
     public VistaPrincipal() {
         initComponents();
-        jTable1.getSelectionModel().addListSelectionListener(new ListListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                //System.out.println("entra");
-                if (!fieldNombre.getText().matches("") && !fieldProducto.getText().matches("")
-                        && !fieldPrecio.getText().matches("") && !fieldCiudad.getText().matches("") && !fieldFecha.getText().matches("")){
-                    Transaccion t = new Transaccion(fieldNombre.getText(), fieldProducto.getText(), 
-                    Integer.parseInt(fieldPrecio.getText()), fieldFecha.getText(), fieldCiudad.getText());
-                    //if (!lista.get(registro).getNombreCliente().matches(fieldNombre.getText())){
-                    if (!lista.get(registro).equals(t)){
-                        if (jTable1.getSelectedRow() != -1){
-                            destino = jTable1.getSelectedRow();
-                            //System.out.println(destino);
-                        }
-                        //System.out.println("entra 2, " + registro);
-                        int valor = JOptionPane.showConfirmDialog(rootPane, "¿Guardar registros?");
-                        if(valor == JOptionPane.YES_OPTION){
-                            salta = false;
-                            //System.out.println("entra 4");
-                            lista.get(registro).setTransaccion(new Transaccion(fieldNombre.getText(), fieldProducto.getText(), Integer.parseInt(fieldPrecio.getText()),fieldFecha.getText(), fieldCiudad.getText()));
-                            //System.out.println(lista.get(registro).getNombreCliente());
-                            jTable1.setModel(Controlador.InsertarRegistros(header, lista));
-                            salta = true;
-                            jTable1.setRowSelectionInterval(destino, destino);
-                        }
-                        else if (valor == JOptionPane.CANCEL_OPTION){
-                        } 
-                        vez = 0;
+        jTable1.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+            //System.out.println("entra");
+            if (!fieldNombre.getText().matches("") && !fieldProducto.getText().matches("")
+                    && !fieldPrecio.getText().matches("") && !fieldCiudad.getText().matches("") && !fieldFecha.getText().matches("")){
+                Transaccion t = new Transaccion(fieldNombre.getText(), fieldProducto.getText(),
+                        Integer.parseInt(fieldPrecio.getText()), fieldFecha.getText(), fieldCiudad.getText());
+                //if (!lista.get(registro).getNombreCliente().matches(fieldNombre.getText())){
+                if (!lista.get(registro).equals(t) && vez < 1){
+                    vez++;
+                    if (jTable1.getSelectedRow() != -1){
+                        destino = jTable1.getSelectedRow();
+                        //System.out.println(destino);
                     }
+                    //System.out.println("entra 2, " + registro);
+                    int valor = JOptionPane.showConfirmDialog(rootPane, "¿Guardar registros?","Guardar",JOptionPane.YES_NO_OPTION);
+                    if(valor == JOptionPane.YES_OPTION){
+                        salta = false;
+                        //System.out.println("entra 4");
+                        lista.get(registro).setTransaccion(new Transaccion(fieldNombre.getText(), fieldProducto.getText(), Integer.parseInt(fieldPrecio.getText()),fieldFecha.getText(), fieldCiudad.getText()));
+                        //System.out.println(lista.get(registro).getNombreCliente());
+                        jTable1.setModel(Controlador.InsertarRegistros(header, lista));
+                        salta = true;
+                        jTable1.setRowSelectionInterval(destino, destino);
+                    }
+                    vez = 0;
                 }
-                if (jTable1.getSelectedRow() != -1)
-                    registro = jTable1.getSelectedRow();
-                if (salta){
-                    //System.out.println("entra 3");
-                    fieldNombre.setText(lista.get(jTable1.getSelectedRow()).getNombreCliente());
-                    fieldProducto.setText(lista.get(jTable1.getSelectedRow()).getProductoComprado());
-                    fieldPrecio.setText(lista.get(jTable1.getSelectedRow()).getPrecio()+"");
-                    fieldFecha.setText(lista.get(jTable1.getSelectedRow()).getFecha());
-                    fieldCiudad.setText(lista.get(jTable1.getSelectedRow()).getCiudad());
-                }
+            }
+            if (jTable1.getSelectedRow() != -1)
+                registro = jTable1.getSelectedRow();
+            if (salta){
+                //System.out.println("entra 3");
+                fieldNombre.setText(lista.get(jTable1.getSelectedRow()).getNombreCliente());
+                fieldProducto.setText(lista.get(jTable1.getSelectedRow()).getProductoComprado());
+                fieldPrecio.setText(lista.get(jTable1.getSelectedRow()).getPrecio()+"");
+                fieldFecha.setText(lista.get(jTable1.getSelectedRow()).getFecha());
+                fieldCiudad.setText(lista.get(jTable1.getSelectedRow()).getCiudad());
             }
         });
     }
@@ -101,6 +98,10 @@ public class VistaPrincipal extends javax.swing.JFrame {
         fieldFecha = new javax.swing.JTextField();
         lblCiudad = new javax.swing.JLabel();
         fieldCiudad = new javax.swing.JTextField();
+        btnEliminar = new javax.swing.JButton();
+        btnNuevo = new javax.swing.JButton();
+        btnSiguiente = new javax.swing.JButton();
+        btnAtras = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         MAbrir = new javax.swing.JMenuItem();
@@ -108,8 +109,12 @@ public class VistaPrincipal extends javax.swing.JFrame {
         jFormattedTextField1.setText("jFormattedTextField1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setPreferredSize(new java.awt.Dimension(800, 600));
+        setSize(new java.awt.Dimension(800, 600));
 
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        jSplitPane1.setResizeWeight(0.8);
+        jSplitPane1.setPreferredSize(new java.awt.Dimension(800, 600));
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -171,6 +176,30 @@ public class VistaPrincipal extends javax.swing.JFrame {
             }
         });
 
+        btnEliminar.setText("Eliminar");
+        btnEliminar.setToolTipText("");
+
+        btnNuevo.setText("Nuevo");
+        btnNuevo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNuevoActionPerformed(evt);
+            }
+        });
+
+        btnSiguiente.setText("Siguiente");
+        btnSiguiente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSiguienteActionPerformed(evt);
+            }
+        });
+
+        btnAtras.setText("Atras");
+        btnAtras.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAtrasActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -190,7 +219,14 @@ public class VistaPrincipal extends javax.swing.JFrame {
                     .addComponent(fieldPrecio)
                     .addComponent(fieldFecha, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
                     .addComponent(fieldCiudad))
-                .addContainerGap(494, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 236, Short.MAX_VALUE)
+                .addComponent(btnAtras)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnSiguiente)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnNuevo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnEliminar))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -213,8 +249,12 @@ public class VistaPrincipal extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblCiudad)
-                    .addComponent(fieldCiudad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(29, Short.MAX_VALUE))
+                    .addComponent(fieldCiudad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnEliminar)
+                    .addComponent(btnNuevo)
+                    .addComponent(btnSiguiente)
+                    .addComponent(btnAtras))
+                .addContainerGap(439, Short.MAX_VALUE))
         );
 
         jSplitPane1.setBottomComponent(jPanel1);
@@ -237,11 +277,11 @@ public class VistaPrincipal extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(jSplitPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -298,6 +338,31 @@ public class VistaPrincipal extends javax.swing.JFrame {
         salta=true;
         jTable1.setRowSelectionInterval(fila, fila);
     }//GEN-LAST:event_fieldCiudadActionPerformed
+
+    private void btnAtrasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtrasActionPerformed
+        if (jTable1.getSelectedRow()!=0 && jTable1.getSelectedRow()!=-1)
+            jTable1.setRowSelectionInterval(jTable1.getSelectedRow()-1, jTable1.getSelectedRow()-1);
+        else if (jTable1.getSelectedRow()==0){
+            jTable1.setRowSelectionInterval(jTable1.getRowCount()-1, jTable1.getRowCount()-1);
+            jScrollPane1.getVerticalScrollBar().setValue(jScrollPane1.getVerticalScrollBar().getMaximum());
+        }
+    }//GEN-LAST:event_btnAtrasActionPerformed
+
+    private void btnSiguienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSiguienteActionPerformed
+        if (jTable1.getSelectedRow()!=jTable1.getRowCount()-1 && jTable1.getSelectedRow()!=-1)
+            jTable1.setRowSelectionInterval(jTable1.getSelectedRow()+1, jTable1.getSelectedRow()+1);
+        else if(jTable1.getSelectedRow()==jTable1.getRowCount()-1 && jTable1.getSelectedRow()!=-1){
+            jTable1.setRowSelectionInterval(0, 0);
+            jScrollPane1.getVerticalScrollBar().setValue(jScrollPane1.getVerticalScrollBar().getMinimum());        
+        }
+    }//GEN-LAST:event_btnSiguienteActionPerformed
+
+    private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
+        lista.add(new Transaccion());
+        salta =false;
+        jTable1.setModel(Controlador.InsertarRegistros(header, lista));
+        salta=true;
+    }//GEN-LAST:event_btnNuevoActionPerformed
     
     /**
      * @param args the command line arguments
@@ -336,6 +401,10 @@ public class VistaPrincipal extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem MAbrir;
+    private javax.swing.JButton btnAtras;
+    private javax.swing.JButton btnEliminar;
+    private javax.swing.JButton btnNuevo;
+    private javax.swing.JButton btnSiguiente;
     private javax.swing.JTextField fieldCiudad;
     private javax.swing.JTextField fieldFecha;
     private javax.swing.JTextField fieldNombre;
