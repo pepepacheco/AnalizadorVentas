@@ -57,6 +57,8 @@ public class VistaPrincipal extends javax.swing.JFrame {
                             salta = true;
                             jTable1.setRowSelectionInterval(destino, destino);
                         }
+                        else if (valor == JOptionPane.CANCEL_OPTION){
+                        } 
                         vez = 0;
                     }
                 }
