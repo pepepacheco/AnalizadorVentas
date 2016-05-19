@@ -42,7 +42,7 @@ public class Transaccion {
                 dia = "0" + dia;
             this.fecha = LocalDate.parse(ano+"-"+mes+"-"+dia);
         }
-        else{
+        else if(fecha.matches("\\d*/\\d*/\\d*")){
             mes=fecha.substring(0,fecha.indexOf('/'));
             if (mes.matches("\\d"))
                 mes = "0" + mes;

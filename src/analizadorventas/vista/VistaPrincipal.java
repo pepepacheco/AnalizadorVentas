@@ -308,10 +308,13 @@ public class VistaPrincipal extends javax.swing.JFrame {
     private void MAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MAbrirActionPerformed
         lblEstado.setText("Abriendo archivo");
         int selection = jFileChooser1.showOpenDialog(jMenu1);
-        if (selection == JFileChooser.APPROVE_OPTION)
+        if (selection == JFileChooser.APPROVE_OPTION){
+            actualizaFormulario=false;
             lista = Controlador.crearColeccionRegistros(jFileChooser1.getSelectedFile());
-        jTable1.setModel(Controlador.InsertarRegistros(header, lista));
-        lblEstado.setText("Archivo abierto");
+            jTable1.setModel(Controlador.InsertarRegistros(header, lista));
+            actualizaFormulario=true;
+            lblEstado.setText("Archivo abierto");
+        }
     }//GEN-LAST:event_MAbrirActionPerformed
 
     private void fieldNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fieldNombreActionPerformed
@@ -345,13 +348,17 @@ public class VistaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_fieldPrecioActionPerformed
 
     private void fieldFechaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fieldFechaActionPerformed
-        lista.get(jTable1.getSelectedRow()).setFecha(fieldFecha.getText());
-        int fila = jTable1.getSelectedRow();
-        actualizaFormulario=false;
-        jTable1.setModel(Controlador.InsertarRegistros(header, lista));
-        actualizaFormulario=true;
-        jTable1.setRowSelectionInterval(fila, fila);
-        lblEstado.setText("Registro actualizado");
+        if (fieldFecha.getText().matches("\\d\\d\\d\\d-\\d\\d-\\d\\d")){
+            lista.get(jTable1.getSelectedRow()).setFecha(fieldFecha.getText());
+            int fila = jTable1.getSelectedRow();
+            actualizaFormulario=false;
+            jTable1.setModel(Controlador.InsertarRegistros(header, lista));
+            actualizaFormulario=true;
+            jTable1.setRowSelectionInterval(fila, fila);
+            lblEstado.setText("Registro actualizado");
+        }
+        else
+            lblEstado.setText("Fecha incorrecta: usa el formato YYYY-MM-DD");
     }//GEN-LAST:event_fieldFechaActionPerformed
 
     private void fieldCiudadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fieldCiudadActionPerformed

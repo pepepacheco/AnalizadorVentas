@@ -17,7 +17,8 @@ import javax.swing.table.DefaultTableModel;
  * @author root
  */
 public class Controlador {
-    static DefaultTableModel dtm = new DefaultTableModel();
+    static Modelo dtm = new Modelo();
+    
     static boolean creado =false;
     public static DefaultTableModel InsertarRegistros(String[] cabecera, List<Transaccion> lista){
         //System.out.println("Entra a la funcion");
