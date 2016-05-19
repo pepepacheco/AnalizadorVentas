@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 
 
@@ -23,7 +22,8 @@ import javax.swing.event.ListSelectionListener;
 public class VistaPrincipal extends javax.swing.JFrame {
     List<Transaccion> lista = new ArrayList<>();
     String[] header = {"Nombre del comprador","Producto","Precio", "Fecha de Transaccion", "Ciudad"};
-    boolean salta =true;
+    boolean actualizaFormulario =true;
+    boolean borrando = false;
     int vez = 0;
     int registro;
     int destino;
@@ -35,34 +35,38 @@ public class VistaPrincipal extends javax.swing.JFrame {
         initComponents();
         jTable1.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
             //System.out.println("entra");
-            if (!fieldNombre.getText().matches("") && !fieldProducto.getText().matches("")
-                    && !fieldPrecio.getText().matches("") && !fieldCiudad.getText().matches("") && !fieldFecha.getText().matches("")){
-                Transaccion t = new Transaccion(fieldNombre.getText(), fieldProducto.getText(),
-                        Integer.parseInt(fieldPrecio.getText()), fieldFecha.getText(), fieldCiudad.getText());
-                //if (!lista.get(registro).getNombreCliente().matches(fieldNombre.getText())){
-                if (!lista.get(registro).equals(t) && vez < 1){
-                    vez++;
-                    if (jTable1.getSelectedRow() != -1){
-                        destino = jTable1.getSelectedRow();
-                        //System.out.println(destino);
+            if (!borrando){
+                if (!fieldNombre.getText().matches("") && !fieldProducto.getText().matches("")
+                        && !fieldPrecio.getText().matches("") && !fieldCiudad.getText().matches("") && !fieldFecha.getText().matches("")){
+                    Transaccion t = new Transaccion(fieldNombre.getText(), fieldProducto.getText(),
+                            Integer.parseInt(fieldPrecio.getText()), fieldFecha.getText(), fieldCiudad.getText());
+                    //if (!lista.get(registro).getNombreCliente().matches(fieldNombre.getText())){
+                    if (!lista.get(registro).equals(t) && vez < 1){
+                        vez++;
+                        if (jTable1.getSelectedRow() != -1){
+                            destino = jTable1.getSelectedRow();
+                            //System.out.println(destino);
+                        }
+                        //System.out.println("entra 2, " + registro);
+                        int valor = JOptionPane.showConfirmDialog(rootPane, "¿Guardar registros?","Guardar",JOptionPane.YES_NO_OPTION);
+                        if(valor == JOptionPane.YES_OPTION){
+                            actualizaFormulario = false;
+                            //System.out.println("entra 4");
+                            lista.get(registro).setTransaccion(new Transaccion(fieldNombre.getText(), fieldProducto.getText(), Integer.parseInt(fieldPrecio.getText()),fieldFecha.getText(), fieldCiudad.getText()));
+                            //System.out.println(lista.get(registro).getNombreCliente());
+                            jTable1.setModel(Controlador.InsertarRegistros(header, lista));
+                            actualizaFormulario = true;
+                            jTable1.setRowSelectionInterval(destino, destino);
+                        }
+                        vez = 0;
                     }
-                    //System.out.println("entra 2, " + registro);
-                    int valor = JOptionPane.showConfirmDialog(rootPane, "¿Guardar registros?","Guardar",JOptionPane.YES_NO_OPTION);
-                    if(valor == JOptionPane.YES_OPTION){
-                        salta = false;
-                        //System.out.println("entra 4");
-                        lista.get(registro).setTransaccion(new Transaccion(fieldNombre.getText(), fieldProducto.getText(), Integer.parseInt(fieldPrecio.getText()),fieldFecha.getText(), fieldCiudad.getText()));
-                        //System.out.println(lista.get(registro).getNombreCliente());
-                        jTable1.setModel(Controlador.InsertarRegistros(header, lista));
-                        salta = true;
-                        jTable1.setRowSelectionInterval(destino, destino);
-                    }
-                    vez = 0;
                 }
             }
-            if (jTable1.getSelectedRow() != -1)
+            if (jTable1.getSelectedRow() != -1){
                 registro = jTable1.getSelectedRow();
-            if (salta){
+                lblEstado.setText("Registro " + (jTable1.getSelectedRow()+1) + " de " + jTable1.getRowCount());
+            }
+            if (actualizaFormulario){
                 //System.out.println("entra 3");
                 fieldNombre.setText(lista.get(jTable1.getSelectedRow()).getNombreCliente());
                 fieldProducto.setText(lista.get(jTable1.getSelectedRow()).getProductoComprado());
@@ -102,6 +106,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
         btnNuevo = new javax.swing.JButton();
         btnSiguiente = new javax.swing.JButton();
         btnAtras = new javax.swing.JButton();
+        lblEstado = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         MAbrir = new javax.swing.JMenuItem();
@@ -109,7 +114,6 @@ public class VistaPrincipal extends javax.swing.JFrame {
         jFormattedTextField1.setText("jFormattedTextField1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(800, 600));
         setSize(new java.awt.Dimension(800, 600));
 
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
@@ -178,6 +182,11 @@ public class VistaPrincipal extends javax.swing.JFrame {
 
         btnEliminar.setText("Eliminar");
         btnEliminar.setToolTipText("");
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarActionPerformed(evt);
+            }
+        });
 
         btnNuevo.setText("Nuevo");
         btnNuevo.addActionListener(new java.awt.event.ActionListener() {
@@ -200,33 +209,40 @@ public class VistaPrincipal extends javax.swing.JFrame {
             }
         });
 
+        lblEstado.setText("Estado");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(lblCiudad)
-                    .addComponent(labelFecha)
-                    .addComponent(lblPrecio)
-                    .addComponent(lblNombre)
-                    .addComponent(lblProducto))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(fieldNombre)
-                    .addComponent(fieldProducto)
-                    .addComponent(fieldPrecio)
-                    .addComponent(fieldFecha, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
-                    .addComponent(fieldCiudad))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 236, Short.MAX_VALUE)
-                .addComponent(btnAtras)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnSiguiente)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnNuevo)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnEliminar))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(lblCiudad)
+                            .addComponent(labelFecha)
+                            .addComponent(lblPrecio)
+                            .addComponent(lblNombre)
+                            .addComponent(lblProducto))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(fieldNombre)
+                            .addComponent(fieldProducto)
+                            .addComponent(fieldPrecio)
+                            .addComponent(fieldFecha, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
+                            .addComponent(fieldCiudad))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 184, Short.MAX_VALUE)
+                        .addComponent(btnAtras)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnSiguiente)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnNuevo)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnEliminar))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(lblEstado)
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -254,7 +270,9 @@ public class VistaPrincipal extends javax.swing.JFrame {
                     .addComponent(btnNuevo)
                     .addComponent(btnSiguiente)
                     .addComponent(btnAtras))
-                .addContainerGap(439, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 64, Short.MAX_VALUE)
+                .addComponent(lblEstado)
+                .addContainerGap())
         );
 
         jSplitPane1.setBottomComponent(jPanel1);
@@ -288,55 +306,62 @@ public class VistaPrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void MAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MAbrirActionPerformed
+        lblEstado.setText("Abriendo archivo");
         int selection = jFileChooser1.showOpenDialog(jMenu1);
         if (selection == JFileChooser.APPROVE_OPTION)
             lista = Controlador.crearColeccionRegistros(jFileChooser1.getSelectedFile());
         jTable1.setModel(Controlador.InsertarRegistros(header, lista));
+        lblEstado.setText("Archivo abierto");
     }//GEN-LAST:event_MAbrirActionPerformed
 
     private void fieldNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fieldNombreActionPerformed
         lista.get(jTable1.getSelectedRow()).setNombreCliente(fieldNombre.getText());
         int fila = jTable1.getSelectedRow();
-        salta=false;
+        actualizaFormulario=false;
         jTable1.setModel(Controlador.InsertarRegistros(header, lista));
-        salta=true;
+        actualizaFormulario=true;
         jTable1.setRowSelectionInterval(fila, fila);
+        lblEstado.setText("Registro actualizado");
     }//GEN-LAST:event_fieldNombreActionPerformed
 
     private void fieldProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fieldProductoActionPerformed
         lista.get(jTable1.getSelectedRow()).setProductoComprado(fieldProducto.getText());
         int fila = jTable1.getSelectedRow();
-        salta=false;
+        actualizaFormulario=false;
         jTable1.setModel(Controlador.InsertarRegistros(header, lista));
-        salta=true;
+        actualizaFormulario=true;
         jTable1.setRowSelectionInterval(fila, fila);
+        lblEstado.setText("Registro actualizado");
     }//GEN-LAST:event_fieldProductoActionPerformed
 
     private void fieldPrecioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fieldPrecioActionPerformed
         lista.get(jTable1.getSelectedRow()).setPrecio(Integer.parseInt(fieldPrecio.getText()));
         int fila = jTable1.getSelectedRow();
-        salta=false;
+        actualizaFormulario=false;
         jTable1.setModel(Controlador.InsertarRegistros(header, lista));
-        salta=true;
+        actualizaFormulario=true;
         jTable1.setRowSelectionInterval(fila, fila);
+        lblEstado.setText("Registro actualizado");
     }//GEN-LAST:event_fieldPrecioActionPerformed
 
     private void fieldFechaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fieldFechaActionPerformed
         lista.get(jTable1.getSelectedRow()).setFecha(fieldFecha.getText());
         int fila = jTable1.getSelectedRow();
-        salta=false;
+        actualizaFormulario=false;
         jTable1.setModel(Controlador.InsertarRegistros(header, lista));
-        salta=true;
+        actualizaFormulario=true;
         jTable1.setRowSelectionInterval(fila, fila);
+        lblEstado.setText("Registro actualizado");
     }//GEN-LAST:event_fieldFechaActionPerformed
 
     private void fieldCiudadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fieldCiudadActionPerformed
         lista.get(jTable1.getSelectedRow()).setCiudad(fieldCiudad.getText());
         int fila = jTable1.getSelectedRow();
-        salta=false;
+        actualizaFormulario=false;
         jTable1.setModel(Controlador.InsertarRegistros(header, lista));
-        salta=true;
+        actualizaFormulario=true;
         jTable1.setRowSelectionInterval(fila, fila);
+        lblEstado.setText("Registro actualizado");
     }//GEN-LAST:event_fieldCiudadActionPerformed
 
     private void btnAtrasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtrasActionPerformed
@@ -359,10 +384,26 @@ public class VistaPrincipal extends javax.swing.JFrame {
 
     private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
         lista.add(new Transaccion());
-        salta =false;
+        actualizaFormulario =false;
         jTable1.setModel(Controlador.InsertarRegistros(header, lista));
-        salta=true;
+        jScrollPane1.getVerticalScrollBar().setValue(jScrollPane1.getVerticalScrollBar().getMaximum());
+        actualizaFormulario=true;
+        jTable1.setRowSelectionInterval(jTable1.getRowCount()-1, jTable1.getRowCount()-1);
+        lblEstado.setText("Registro insertado");
     }//GEN-LAST:event_btnNuevoActionPerformed
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        borrando = true;
+        lista.remove(jTable1.getSelectedRow());
+        actualizaFormulario=false;
+        jTable1.setModel(Controlador.InsertarRegistros(header, lista));
+        actualizaFormulario=true;
+        if (registro == jTable1.getRowCount())
+            registro-=1;
+        jTable1.setRowSelectionInterval(registro, registro);
+        borrando=false;
+        lblEstado.setText("Registro borrado");
+    }//GEN-LAST:event_btnEliminarActionPerformed
     
     /**
      * @param args the command line arguments
@@ -420,6 +461,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
     private javax.swing.JTable jTable1;
     private javax.swing.JLabel labelFecha;
     private javax.swing.JLabel lblCiudad;
+    private javax.swing.JLabel lblEstado;
     private javax.swing.JLabel lblNombre;
     private javax.swing.JLabel lblPrecio;
     private javax.swing.JLabel lblProducto;
