@@ -34,40 +34,44 @@ public class VistaPrincipal extends javax.swing.JFrame {
     public VistaPrincipal() {
         initComponents();
         jTable1.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
-            //System.out.println("entra");
-            if (!borrando){
-                if (!fieldNombre.getText().matches("") && !fieldProducto.getText().matches("")
+            //Aqui comprobamos que el sistema no este borrando archivos y que no haya ningun campo que este vacio
+                if (!borrando && !fieldNombre.getText().matches("") && !fieldProducto.getText().matches("")
                         && !fieldPrecio.getText().matches("") && !fieldCiudad.getText().matches("") && !fieldFecha.getText().matches("")){
+                    //Si la condiciones son las correctas creamos un objeto del Modelo con los datos de los campos del formulario
                     Transaccion t = new Transaccion(fieldNombre.getText(), fieldProducto.getText(),
                             Integer.parseInt(fieldPrecio.getText()), fieldFecha.getText(), fieldCiudad.getText());
-                    //if (!lista.get(registro).getNombreCliente().matches(fieldNombre.getText())){
+                    //Comprobamos que el objeto creado antes es distinto del de la lista
+                    //y que es la primera vez que entra, asegurandonos de que ha entrado por 
+                    //una orden del usuario y no por un proceso del sistema
                     if (!lista.get(registro).equals(t) && vez < 1){
                         vez++;
                         if (jTable1.getSelectedRow() != -1){
+                            //Guardamos el registro al que ibamos a ir,de modo que, podamos llevar al usuario a su destino
                             destino = jTable1.getSelectedRow();
-                            //System.out.println(destino);
                         }
-                        //System.out.println("entra 2, " + registro);
+                        //llamamos al dialogo
                         int valor = JOptionPane.showConfirmDialog(rootPane, "¿Guardar registros?","Guardar",JOptionPane.YES_NO_OPTION);
                         if(valor == JOptionPane.YES_OPTION){
+                            //si el usuario decide guardar los datos, hacemos la modificacion
+                            //del objeto transaccion de la lista
                             actualizaFormulario = false;
-                            //System.out.println("entra 4");
                             lista.get(registro).setTransaccion(new Transaccion(fieldNombre.getText(), fieldProducto.getText(), Integer.parseInt(fieldPrecio.getText()),fieldFecha.getText(), fieldCiudad.getText()));
-                            //System.out.println(lista.get(registro).getNombreCliente());
                             jTable1.setModel(Controlador.InsertarRegistros(header, lista));
                             actualizaFormulario = true;
+                            //Colocamos al usuario en el registro al que iba en un principio
                             jTable1.setRowSelectionInterval(destino, destino);
                         }
                         vez = 0;
                     }
                 }
-            }
             if (jTable1.getSelectedRow() != -1){
+                //Guardamos el registro en el que estamos, para usarlo en otros metodos como una especie de historial
                 registro = jTable1.getSelectedRow();
+                //actualizamos la pestaña de estado
                 lblEstado.setText("Registro " + (jTable1.getSelectedRow()+1) + " de " + jTable1.getRowCount());
             }
             if (actualizaFormulario){
-                //System.out.println("entra 3");
+                //Si el usuario se ha movido de registro, cargamos los datos del nuevo objeto en el formulario
                 fieldNombre.setText(lista.get(jTable1.getSelectedRow()).getNombreCliente());
                 fieldProducto.setText(lista.get(jTable1.getSelectedRow()).getProductoComprado());
                 fieldPrecio.setText(lista.get(jTable1.getSelectedRow()).getPrecio()+"");
@@ -306,18 +310,24 @@ public class VistaPrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void MAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MAbrirActionPerformed
+        //Cuando el usuario pulsa la opcion Abrir en el menu superior abrimos 
+        //el JFileChooser para cargar un archivo
         lblEstado.setText("Abriendo archivo");
         int selection = jFileChooser1.showOpenDialog(jMenu1);
         if (selection == JFileChooser.APPROVE_OPTION){
             actualizaFormulario=false;
+            //Creamos la lista de objetos con el archivo que nos han dado
             lista = Controlador.crearColeccionRegistros(jFileChooser1.getSelectedFile());
+            //y la vocamos en la tabla
             jTable1.setModel(Controlador.InsertarRegistros(header, lista));
             actualizaFormulario=true;
             lblEstado.setText("Archivo abierto");
         }
     }//GEN-LAST:event_MAbrirActionPerformed
 
+    // Si el usuario pulsa enter despues de modificar algun campo del formulario hacemos que la tabla se actualice
     private void fieldNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fieldNombreActionPerformed
+        
         lista.get(jTable1.getSelectedRow()).setNombreCliente(fieldNombre.getText());
         int fila = jTable1.getSelectedRow();
         actualizaFormulario=false;
@@ -371,6 +381,8 @@ public class VistaPrincipal extends javax.swing.JFrame {
         lblEstado.setText("Registro actualizado");
     }//GEN-LAST:event_fieldCiudadActionPerformed
 
+    //Tanto el boton siguiente como el boton atras son capaces de saltar del primer registro al ultimo
+    //y viceversa
     private void btnAtrasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtrasActionPerformed
         if (jTable1.getSelectedRow()!=0 && jTable1.getSelectedRow()!=-1)
             jTable1.setRowSelectionInterval(jTable1.getSelectedRow()-1, jTable1.getSelectedRow()-1);
@@ -388,11 +400,10 @@ public class VistaPrincipal extends javax.swing.JFrame {
             jScrollPane1.getVerticalScrollBar().setValue(jScrollPane1.getVerticalScrollBar().getMinimum());        
         }
     }//GEN-LAST:event_btnSiguienteActionPerformed
-
+    //Creamos un nuevo registro vacio, con la excepcion de la fecha, a la que le damos el dia actual por defecto
     private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
-        lista.add(new Transaccion());
         actualizaFormulario =false;
-        jTable1.setModel(Controlador.InsertarRegistros(header, lista));
+        jTable1.setModel(Controlador.nuevoRegistroVacio(header, lista));
         jScrollPane1.getVerticalScrollBar().setValue(jScrollPane1.getVerticalScrollBar().getMaximum());
         actualizaFormulario=true;
         jTable1.setRowSelectionInterval(jTable1.getRowCount()-1, jTable1.getRowCount()-1);
@@ -401,13 +412,14 @@ public class VistaPrincipal extends javax.swing.JFrame {
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
         borrando = true;
-        lista.remove(jTable1.getSelectedRow());
         actualizaFormulario=false;
-        jTable1.setModel(Controlador.InsertarRegistros(header, lista));
+        jTable1.setModel(Controlador.borrarRegistro(header, lista,jTable1.getSelectedRow()));
         actualizaFormulario=true;
-        if (registro == jTable1.getRowCount())
-            registro-=1;
-        jTable1.setRowSelectionInterval(registro, registro);
+        if (jTable1.getRowCount()!=0){
+            if (registro == jTable1.getRowCount())
+                registro-=1;
+            jTable1.setRowSelectionInterval(registro, registro);
+        }
         borrando=false;
         lblEstado.setText("Registro borrado");
     }//GEN-LAST:event_btnEliminarActionPerformed

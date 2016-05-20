@@ -11,7 +11,7 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author root
  */
-public class Modelo extends DefaultTableModel{
+public class ModeloTabla extends DefaultTableModel{
 
     @Override
     public boolean isCellEditable(int row, int column) {
