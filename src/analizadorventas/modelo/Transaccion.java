@@ -92,6 +92,9 @@ public class Transaccion {
     public String getFecha() {
         return fecha.toString();
     }
+    public String getFechaParseada(){
+        return this.fecha.toString().substring(this.fecha.toString().lastIndexOf("-"),this.fecha.toString().length()-1)+"/"+this.fecha.toString().substring(this.fecha.toString().indexOf("-"),this.fecha.toString().lastIndexOf("-"))+"/"+this.fecha.toString().substring(0,this.fecha.toString().indexOf("-"));
+    }
 
     public String getCiudad() {
         return ciudad;

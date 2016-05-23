@@ -5,10 +5,13 @@
  */
 package analizadorventas.controlador;
 
+import analizadorventas.modelo.Transaccion;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,6 +44,19 @@ public class ControladorDb {
         return conexiondb;
     }
     
+    public static int actualizarRegistro(Connection con, Transaccion t, int registro){
+        PreparedStatement s;
+        String sentencia;
+        return 0;
+    }
+    
+    public static void primeraInsercion(Connection con, List<Transaccion> lista){
+        for (Transaccion t : lista) {
+        String sql = "INSERT INTO transaccion VALUES"
+                + "(null,"+"'"+t.getNombreCliente()+"',"+t.getPrecio()+",'"+t.getProductoComprado()+"',"+t.getFechaParseada()+",'"+t.getCiudad()+"')";
+        }
+    }
+    
     public static void crearTablaTransaccion(Connection con){
         Statement s;
         String sentencia = "CREATE TABLE IF NOT EXISTS transaccion("
@@ -48,7 +64,6 @@ public class ControladorDb {
                 + "nombre TEXT"
                 + "precio INTEGER"
                 + "producto TEXT"
-                + "precio INTEGER"
                 + "fecha DATE"
                 + "ciudad TEXT)";
         try {

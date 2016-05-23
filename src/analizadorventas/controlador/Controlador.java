@@ -56,6 +56,7 @@ public class Controlador {
             lista.add(new Transaccion(data[4], data[1],Integer.parseInt(data[2]), data[0],data[5]));
         }
         ControladorDb.crearTablaTransaccion(ControladorDb.getConexiondb());
+        ControladorDb.primeraInsercion(ControladorDb.getConexiondb(), lista);
         return lista;
     }
     public static DefaultTableModel nuevoRegistroVacio(String[] cabecera,List<Transaccion> lista){
