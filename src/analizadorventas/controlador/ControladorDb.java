@@ -24,6 +24,7 @@ import org.sqlite.SQLiteConfig;
  */
 public class ControladorDb {
     private static Connection conexiondb =null; 
+    private static Statement sentencia;
     private ControladorDb(){};
     
     public static Connection getConexiondb(){
@@ -44,31 +45,52 @@ public class ControladorDb {
         return conexiondb;
     }
     
-    public static int actualizarRegistro(Connection con, Transaccion t, int registro){
-        PreparedStatement s;
-        String sentencia;
-        return 0;
+    public static int actualizarRegistro(Connection con, Transaccion t, int posicionLista){
+        int resultado = 0;
+        try {
+            PreparedStatement s;
+            String sql = "UPDATE transaccion SET nombre=?,precio=?,producto=?,fecha=?,ciudad=?"
+                    + "WHERE id=?";
+            s = con.prepareStatement(sql);
+            s.setString(1, t.getNombreCliente());
+            s.setString(2, t.getPrecio()+"");
+            s.setString(3, t.getProductoComprado());
+            s.setString(4, t.getFechaParseada());
+            s.setString(5, t.getCiudad());
+            s.setString(6, posicionLista+"");
+            resultado = s.executeUpdate();
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(ControladorDb.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return resultado;
     }
     
     public static void primeraInsercion(Connection con, List<Transaccion> lista){
         for (Transaccion t : lista) {
-        String sql = "INSERT INTO transaccion VALUES"
-                + "(null,"+"'"+t.getNombreCliente()+"',"+t.getPrecio()+",'"+t.getProductoComprado()+"',"+t.getFechaParseada()+",'"+t.getCiudad()+"')";
+            try {
+                String sql = "INSERT INTO transaccion VALUES"
+                        + "(null,"+"'"+t.getNombreCliente()+"',"+t.getPrecio()+",'"+t.getProductoComprado()+"',"+t.getFechaParseada()+",'"+t.getCiudad()+"')";
+                sentencia = con.createStatement();
+                sentencia.executeUpdate(sql);
+            } catch (SQLException ex) {
+                Logger.getLogger(ControladorDb.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
     
     public static void crearTablaTransaccion(Connection con){
         Statement s;
-        String sentencia = "CREATE TABLE IF NOT EXISTS transaccion("
+        String sql = "CREATE TABLE IF NOT EXISTS transaccion("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + "nombre TEXT"
-                + "precio INTEGER"
-                + "producto TEXT"
-                + "fecha DATE"
+                + "nombre TEXT,"
+                + "precio INTEGER,"
+                + "producto TEXT,"
+                + "fecha DATE,"
                 + "ciudad TEXT)";
         try {
             s=con.createStatement();
-            s.executeUpdate(sentencia);
+            s.executeUpdate(sql);
         } catch (SQLException ex) {
             Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
         }

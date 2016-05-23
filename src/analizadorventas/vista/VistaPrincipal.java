@@ -6,6 +6,7 @@
 package analizadorventas.vista;
 
 import analizadorventas.controlador.Controlador;
+import analizadorventas.controlador.ControladorDb;
 import analizadorventas.modelo.Transaccion;
 import javax.swing.JFileChooser;
 import java.util.List;
@@ -56,6 +57,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
                             //del objeto transaccion de la lista
                             actualizaFormulario = false;
                             lista.get(registro).setTransaccion(new Transaccion(fieldNombre.getText(), fieldProducto.getText(), Integer.parseInt(fieldPrecio.getText()),fieldFecha.getText(), fieldCiudad.getText()));
+                            System.out.println(ControladorDb.actualizarRegistro(ControladorDb.getConexiondb(), lista.get(registro), registro));
                             jTable1.setModel(Controlador.InsertarRegistros(header, lista));
                             actualizaFormulario = true;
                             //Colocamos al usuario en el registro al que iba en un principio
@@ -327,7 +329,6 @@ public class VistaPrincipal extends javax.swing.JFrame {
 
     // Si el usuario pulsa enter despues de modificar algun campo del formulario hacemos que la tabla se actualice
     private void fieldNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fieldNombreActionPerformed
-        
         lista.get(jTable1.getSelectedRow()).setNombreCliente(fieldNombre.getText());
         int fila = jTable1.getSelectedRow();
         actualizaFormulario=false;
