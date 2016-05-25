@@ -18,19 +18,29 @@ import java.util.logging.Logger;
  * @author root
  */
 public class CsvImporter {
-    
+    //Clase que cree para la implementacion de opencsv con mi codigo
     private CSVReader reader;
     private String[] currentLine;
     private int rowNumber = 0;
-    
+   //Constructor de la clase, que me crea la ruta y pasa la primera linea de la cabecera
+    /**
+     * @param inFile
+     * @param charset 
+     */
     public CsvImporter(File inFile,Charset charset) {
-        try {
-            reader = new CSVReader(new BufferedReader(new FileReader(inFile)), ',');
-            currentLine = reader.readNext();
-        } catch (IOException ex) {
-            Logger.getLogger(CsvImporter.class.getName()).log(Level.SEVERE, null, ex);
+        if (inFile.getAbsolutePath().matches(".*\\.csv")){
+            try {
+                reader = new CSVReader(new BufferedReader(new FileReader(inFile)), ',');
+                currentLine = reader.readNext();
+            } catch (IOException ex) {
+                Logger.getLogger(CsvImporter.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
+    //Metodo que no da la siguiente linea del csv
+    /**
+     * @return currentLine
+     */
     public String[] readNextLine(){
         if (reader.verifyReader()){
             try {
@@ -43,15 +53,4 @@ public class CsvImporter {
         }
         return null;
     }
-    public String readValue(int index){
-        return currentLine[index].trim();
-    }
-
-    
-    
-    public int getRowNumber() {
-        return rowNumber;
-    }
-    
-    
 }

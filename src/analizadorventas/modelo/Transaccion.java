@@ -18,7 +18,13 @@ public class Transaccion {
     private int precio;
     private LocalDate fecha;
     private String ciudad;
-
+    /**
+     * @param nombre
+     * @param producto
+     * @param precio
+     * @param fecha
+     * @param ciudad 
+     */
     public Transaccion(String nombre, String producto,int precio, String fecha, String ciudad) {
         String dia;
         String mes;
@@ -30,7 +36,7 @@ public class Transaccion {
         this.productoComprado = producto.trim();
         //System.out.println(this.nombreCliente + " " +  precio);
         this.precio = precio;
-        if (fecha.matches("\\d*-\\d*-\\d*")){
+        if (fecha.matches("\\d{4}-\\d{2}-\\d{2}")){
             ano=fecha.substring(0,fecha.indexOf('-'));
             if (ano.matches("\\d\\d"))
                 ano = "20"+ano;
@@ -40,6 +46,12 @@ public class Transaccion {
             dia = fecha.substring(fecha.lastIndexOf("-")+1,fecha.length());
             if (dia.matches("\\d"))
                 dia = "0" + dia;
+            this.fecha = LocalDate.parse(ano+"-"+mes+"-"+dia);
+        }
+        else if (fecha.matches("\\d{2}/\\d{2}/\\d{4}")){
+            dia = fecha.substring(0,fecha.indexOf("/"));
+            mes = fecha.substring(fecha.indexOf("/")+1,fecha.lastIndexOf("/"));
+            ano = fecha.substring(fecha.lastIndexOf("/")+1,fecha.length());
             this.fecha = LocalDate.parse(ano+"-"+mes+"-"+dia);
         }
         else{
@@ -59,7 +71,7 @@ public class Transaccion {
         }
         this.ciudad = ciudad.trim();
     }
-    
+    //Constructor de objeto vacio
     public Transaccion(){
         this.nombreCliente="";
         this.productoComprado="";
@@ -67,7 +79,11 @@ public class Transaccion {
         this.fecha=LocalDate.now();
         this.ciudad="";
     }
-    
+    /**
+     * @param t 
+     */
+    //Setter que he creado para, en un caso especifico poder modificar la transaccion completa
+    //y no tener que modifcar campo a campo
     public void setTransaccion(Transaccion t){
         this.nombreCliente = t.nombreCliente;
         this.productoComprado = t.productoComprado;
@@ -76,42 +92,61 @@ public class Transaccion {
         this.ciudad = t.ciudad;
            
     }
-
+/**
+ * @return nombreCliante
+ */
     public String getNombreCliente() {
         return nombreCliente;
     }
-
+/**
+ * @return ProductoComprado
+ */
     public String getProductoComprado() {
         return productoComprado;
     }
-
+/**
+ * @return Precio
+ */
     public int getPrecio() {
         return precio;
     }
-
+/**
+ * @return Fecha
+ */
     public String getFecha() {
         return fecha.toString();
     }
-    public String getFechaParseada(){
-        return this.fecha.toString().substring(this.fecha.toString().lastIndexOf("-"),this.fecha.toString().length()-1)+"/"+this.fecha.toString().substring(this.fecha.toString().indexOf("-"),this.fecha.toString().lastIndexOf("-"))+"/"+this.fecha.toString().substring(0,this.fecha.toString().indexOf("-"));
-    }
-
+/**
+ * @return ciudad
+ */
     public String getCiudad() {
         return ciudad;
     }
-
+/**
+ * 
+ * @param nombreCliente 
+ */
     public void setNombreCliente(String nombreCliente) {
         this.nombreCliente = nombreCliente;
     }
-
+/**
+ * 
+ * @param productoComprado 
+ */
     public void setProductoComprado(String productoComprado) {
         this.productoComprado = productoComprado;
     }
-
+/**
+ * 
+ * @param precio 
+ */
     public void setPrecio(int precio) {
         this.precio = precio;
     }
-
+/**
+ * 
+ * @param fecha 
+ */
     public void setFecha(String fecha) {
         String dia;
         String mes;
@@ -171,9 +206,5 @@ public class Transaccion {
             return false;
         }
         return true;
-    }
-    
-    
-    
-    
+    }    
 }

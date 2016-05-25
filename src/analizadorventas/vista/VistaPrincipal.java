@@ -7,6 +7,7 @@ package analizadorventas.vista;
 
 import analizadorventas.controlador.Controlador;
 import analizadorventas.controlador.ControladorDb;
+import analizadorventas.controlador.ControladorPdf;
 import analizadorventas.modelo.Transaccion;
 import javax.swing.JFileChooser;
 import java.util.List;
@@ -21,12 +22,19 @@ import javax.swing.event.ListSelectionEvent;
  * @author root
  */
 public class VistaPrincipal extends javax.swing.JFrame {
+    //Lista en la que guardaremos nuestros objetos
     List<Transaccion> lista = new ArrayList<>();
+    //Cabecero de la tabla
     String[] header = {"Nombre del comprador","Producto","Precio", "Fecha de Transaccion", "Ciudad"};
+    //Variable que nos permite llevar el control de si queremos que el programa actualice el formulario al movernos de registro
     boolean actualizaFormulario =true;
+    //Variable para controlar si estamos borrando registros, para que no haga ciertas comprobaciones si resulta que si estamos borrando
     boolean borrando = false;
-    int vez = 0;
+    //Variable para que no nos pregunte si queremos guardar los datos si ya estamos guardandolos
+    boolean actualizando = false;
+    //Variable que guarda el registro del que venimos
     int registro;
+    //Variable que guarda el registro al que vamos
     int destino;
     
     /**
@@ -34,6 +42,17 @@ public class VistaPrincipal extends javax.swing.JFrame {
      */
     public VistaPrincipal() {
         initComponents();
+        //Si la base de datos no tiene ninguna tupla permitimos al usuario cargar su csv
+        //Si tenemos una base de datos funcional, deshabilitamos el boton y cargamos la base
+        if (ControladorDb.verNumeroRegistros(ControladorDb.getConexiondb())>0){
+            MAbrir.setEnabled(false);
+            lblEstado.setText("Abriendo archivo");
+            actualizaFormulario=false;
+            lista = ControladorDb.devolverLista(ControladorDb.getConexiondb());
+            jTable1.setModel(Controlador.InsertarRegistros(header, lista));
+            actualizaFormulario=true;
+            lblEstado.setText("Archivo abierto");
+        }
         jTable1.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
             //Aqui comprobamos que el sistema no este borrando archivos y que no haya ningun campo que este vacio
                 if (!borrando && !fieldNombre.getText().matches("") && !fieldProducto.getText().matches("")
@@ -44,8 +63,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
                     //Comprobamos que el objeto creado antes es distinto del de la lista
                     //y que es la primera vez que entra, asegurandonos de que ha entrado por 
                     //una orden del usuario y no por un proceso del sistema
-                    if (!lista.get(registro).equals(t) && vez < 1){
-                        vez++;
+                    if (!lista.get(registro).equals(t) && !actualizando ){
                         if (jTable1.getSelectedRow() != -1){
                             //Guardamos el registro al que ibamos a ir,de modo que, podamos llevar al usuario a su destino
                             destino = jTable1.getSelectedRow();
@@ -57,13 +75,12 @@ public class VistaPrincipal extends javax.swing.JFrame {
                             //del objeto transaccion de la lista
                             actualizaFormulario = false;
                             lista.get(registro).setTransaccion(new Transaccion(fieldNombre.getText(), fieldProducto.getText(), Integer.parseInt(fieldPrecio.getText()),fieldFecha.getText(), fieldCiudad.getText()));
-                            System.out.println(ControladorDb.actualizarRegistro(ControladorDb.getConexiondb(), lista.get(registro), registro));
+                            ControladorDb.actualizarRegistro(ControladorDb.getConexiondb(), lista.get(registro), registro+1);
                             jTable1.setModel(Controlador.InsertarRegistros(header, lista));
                             actualizaFormulario = true;
                             //Colocamos al usuario en el registro al que iba en un principio
                             jTable1.setRowSelectionInterval(destino, destino);
                         }
-                        vez = 0;
                     }
                 }
             if (jTable1.getSelectedRow() != -1){
@@ -116,6 +133,10 @@ public class VistaPrincipal extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         MAbrir = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+        mGenerar = new javax.swing.JMenuItem();
+        jMenu3 = new javax.swing.JMenu();
+        mAcerca = new javax.swing.JMenuItem();
 
         jFormattedTextField1.setText("jFormattedTextField1");
 
@@ -295,6 +316,31 @@ public class VistaPrincipal extends javax.swing.JFrame {
 
         jMenuBar1.add(jMenu1);
 
+        jMenu2.setText("Info");
+
+        mGenerar.setText("Generar PDF");
+        mGenerar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mGenerarActionPerformed(evt);
+            }
+        });
+        jMenu2.add(mGenerar);
+
+        jMenuBar1.add(jMenu2);
+
+        jMenu3.setText("Acerca de");
+        jMenu3.setToolTipText("");
+
+        mAcerca.setText("Acerca de");
+        mAcerca.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mAcercaActionPerformed(evt);
+            }
+        });
+        jMenu3.add(mAcerca);
+
+        jMenuBar1.add(jMenu3);
+
         setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -310,7 +356,10 @@ public class VistaPrincipal extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+/**
+ * 
+ * @param evt 
+ */
     private void MAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MAbrirActionPerformed
         //Cuando el usuario pulsa la opcion Abrir en el menu superior abrimos 
         //el JFileChooser para cargar un archivo
@@ -328,62 +377,91 @@ public class VistaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_MAbrirActionPerformed
 
     // Si el usuario pulsa enter despues de modificar algun campo del formulario hacemos que la tabla se actualice
+    /**
+     * 
+     * @param evt 
+     */
     private void fieldNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fieldNombreActionPerformed
         lista.get(jTable1.getSelectedRow()).setNombreCliente(fieldNombre.getText());
+        ControladorDb.actualizarRegistro(ControladorDb.getConexiondb(), lista.get(registro), registro+1);
         int fila = jTable1.getSelectedRow();
         actualizaFormulario=false;
+        actualizando=true;
         jTable1.setModel(Controlador.InsertarRegistros(header, lista));
         actualizaFormulario=true;
         jTable1.setRowSelectionInterval(fila, fila);
+        actualizando=false;
         lblEstado.setText("Registro actualizado");
     }//GEN-LAST:event_fieldNombreActionPerformed
-
+/**
+ * 
+ * @param evt 
+ */
     private void fieldProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fieldProductoActionPerformed
         lista.get(jTable1.getSelectedRow()).setProductoComprado(fieldProducto.getText());
+        ControladorDb.actualizarRegistro(ControladorDb.getConexiondb(), lista.get(registro), registro+1);
         int fila = jTable1.getSelectedRow();
         actualizaFormulario=false;
+        actualizando=true;
         jTable1.setModel(Controlador.InsertarRegistros(header, lista));
         actualizaFormulario=true;
         jTable1.setRowSelectionInterval(fila, fila);
+        actualizando=false;
         lblEstado.setText("Registro actualizado");
     }//GEN-LAST:event_fieldProductoActionPerformed
 
     private void fieldPrecioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fieldPrecioActionPerformed
         lista.get(jTable1.getSelectedRow()).setPrecio(Integer.parseInt(fieldPrecio.getText()));
+        ControladorDb.actualizarRegistro(ControladorDb.getConexiondb(), lista.get(registro), registro+1);
         int fila = jTable1.getSelectedRow();
         actualizaFormulario=false;
+        actualizando=true;
         jTable1.setModel(Controlador.InsertarRegistros(header, lista));
         actualizaFormulario=true;
         jTable1.setRowSelectionInterval(fila, fila);
+        actualizando = false;
         lblEstado.setText("Registro actualizado");
     }//GEN-LAST:event_fieldPrecioActionPerformed
-
+/**
+ * @param evt 
+ */
     private void fieldFechaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fieldFechaActionPerformed
         if (fieldFecha.getText().matches("\\d\\d\\d\\d-\\d\\d-\\d\\d")){
             lista.get(jTable1.getSelectedRow()).setFecha(fieldFecha.getText());
+            ControladorDb.actualizarRegistro(ControladorDb.getConexiondb(), lista.get(registro), registro+1);
             int fila = jTable1.getSelectedRow();
             actualizaFormulario=false;
+            actualizando = true;
             jTable1.setModel(Controlador.InsertarRegistros(header, lista));
             actualizaFormulario=true;
             jTable1.setRowSelectionInterval(fila, fila);
+            actualizando =false;
             lblEstado.setText("Registro actualizado");
         }
         else
             lblEstado.setText("Fecha incorrecta: usa el formato YYYY-MM-DD");
     }//GEN-LAST:event_fieldFechaActionPerformed
-
+/**
+ * @param evt 
+ */
     private void fieldCiudadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fieldCiudadActionPerformed
         lista.get(jTable1.getSelectedRow()).setCiudad(fieldCiudad.getText());
+        ControladorDb.actualizarRegistro(ControladorDb.getConexiondb(), lista.get(registro), registro+1);
         int fila = jTable1.getSelectedRow();
         actualizaFormulario=false;
+        actualizando = true;
         jTable1.setModel(Controlador.InsertarRegistros(header, lista));
         actualizaFormulario=true;
         jTable1.setRowSelectionInterval(fila, fila);
+        actualizando=false;
         lblEstado.setText("Registro actualizado");
     }//GEN-LAST:event_fieldCiudadActionPerformed
 
     //Tanto el boton siguiente como el boton atras son capaces de saltar del primer registro al ultimo
     //y viceversa
+    /**
+     * @param evt 
+     */
     private void btnAtrasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtrasActionPerformed
         if (jTable1.getSelectedRow()!=0 && jTable1.getSelectedRow()!=-1)
             jTable1.setRowSelectionInterval(jTable1.getSelectedRow()-1, jTable1.getSelectedRow()-1);
@@ -392,7 +470,9 @@ public class VistaPrincipal extends javax.swing.JFrame {
             jScrollPane1.getVerticalScrollBar().setValue(jScrollPane1.getVerticalScrollBar().getMaximum());
         }
     }//GEN-LAST:event_btnAtrasActionPerformed
-
+/**
+ * @param evt 
+ */
     private void btnSiguienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSiguienteActionPerformed
         if (jTable1.getSelectedRow()!=jTable1.getRowCount()-1 && jTable1.getSelectedRow()!=-1)
             jTable1.setRowSelectionInterval(jTable1.getSelectedRow()+1, jTable1.getSelectedRow()+1);
@@ -402,6 +482,9 @@ public class VistaPrincipal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnSiguienteActionPerformed
     //Creamos un nuevo registro vacio, con la excepcion de la fecha, a la que le damos el dia actual por defecto
+    /**
+     * @param evt 
+     */
     private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
         actualizaFormulario =false;
         jTable1.setModel(Controlador.nuevoRegistroVacio(header, lista));
@@ -410,8 +493,12 @@ public class VistaPrincipal extends javax.swing.JFrame {
         jTable1.setRowSelectionInterval(jTable1.getRowCount()-1, jTable1.getRowCount()-1);
         lblEstado.setText("Registro insertado");
     }//GEN-LAST:event_btnNuevoActionPerformed
-
+    // Eliminamos el registro de la tabla en el que estamos actualmente, tambien lo borramos de la base de datos
+    /**
+     * @param evt 
+     */
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        //usamos la variable borrando para que el listener de movimiento de la tabla no salte mientras borramos
         borrando = true;
         actualizaFormulario=false;
         jTable1.setModel(Controlador.borrarRegistro(header, lista,jTable1.getSelectedRow()));
@@ -424,6 +511,20 @@ public class VistaPrincipal extends javax.swing.JFrame {
         borrando=false;
         lblEstado.setText("Registro borrado");
     }//GEN-LAST:event_btnEliminarActionPerformed
+    //Generamos el pdf con todos los registros de la tabla
+    /**
+    * @param evt 
+    */
+    private void mGenerarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mGenerarActionPerformed
+        ControladorPdf.CrearPdf(lista);
+    }//GEN-LAST:event_mGenerarActionPerformed
+    //Lanzamos el JDialog con la informacion del proyecto y de su creador
+    /**
+    * @param evt 
+    */
+    private void mAcercaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mAcercaActionPerformed
+        JOptionPane.showConfirmDialog(rootPane, "Proyecto: Analizador de ventas \nAutor: Tomás Amate  ", "Acerca de", JOptionPane.PLAIN_MESSAGE);
+    }//GEN-LAST:event_mAcercaActionPerformed
     
     /**
      * @param args the command line arguments
@@ -474,6 +575,8 @@ public class VistaPrincipal extends javax.swing.JFrame {
     private javax.swing.JFileChooser jFileChooser1;
     private javax.swing.JFormattedTextField jFormattedTextField1;
     private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
@@ -485,5 +588,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel lblNombre;
     private javax.swing.JLabel lblPrecio;
     private javax.swing.JLabel lblProducto;
+    private javax.swing.JMenuItem mAcerca;
+    private javax.swing.JMenuItem mGenerar;
     // End of variables declaration//GEN-END:variables
 }

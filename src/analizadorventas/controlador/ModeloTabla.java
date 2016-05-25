@@ -7,6 +7,8 @@ package analizadorventas.controlador;
 
 import javax.swing.table.DefaultTableModel;
 
+ //Esta clase se crea para poder tener un modelo no modificable
+// es decir, que las celdas no sean editables
 /**
  *
  * @author root
